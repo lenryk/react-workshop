@@ -1,10 +1,11 @@
+import React from 'react'
 
-function App() {
-  return (
-    <div className="Example" id="my-element" style={{background: "black", color: "white"}} onClick={() => alert('hello')}>
-      Hello World
+const App = () => (
+    <div>
+        <h1>My App</h1>
+        <br />
+        <div>Hello React!</div>
     </div>
-  );
-}
+)
 
 export default App;
