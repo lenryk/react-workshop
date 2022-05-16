@@ -21,6 +21,7 @@ class App extends Component {
 
     validateUsernameOnBlur(event) {
         console.log(event.target.value)
+        this.setState()
     }
 
     displayForm() {
