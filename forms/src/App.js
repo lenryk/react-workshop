@@ -2,24 +2,22 @@ import React, {Component} from 'react'
 
 class App extends Component {
 
-    constructor(props) {
-        super(props);
-        this.validateUsernameOnBlur = this.validateUsernameOnBlur.bind(this);
-        this.state = {
-            username: '',
-            password: '',
-            passwordConfirmation: '',
-            email: '',
-            errors: []
-        }
+
+    state = {
+        username: '',
+        password: '',
+        passwordConfirmation: '',
+        email: '',
+        errors: []
     }
+
 
     submitForm(event) {
         event.preventDefault()
         console.log('Submitting the form now...')
     }
 
-    validateUsernameOnBlur(event) {
+    validateUsernameOnBlur = (event) => {
         console.log(event.target.value)
         this.setState()
     }
