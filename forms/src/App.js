@@ -4,6 +4,7 @@ class App extends Component {
 
     constructor(props) {
         super(props);
+        this.validateUsernameOnBlur = this.validateUsernameOnBlur.bind(this);
         this.state = {
             username: '',
             password: '',
@@ -13,15 +14,24 @@ class App extends Component {
         }
     }
 
+    submitForm(event) {
+        event.preventDefault()
+        console.log('Submitting the form now...')
+    }
+
+    validateUsernameOnBlur(event) {
+        console.log(event.target.value)
+    }
+
     displayForm() {
         return (
             <div>
-                Username: <input type='text' /><br/>
+                Username: <input type='text' onBlur={this.validateUsernameOnBlur}/><br/>
                 Password: <input type='text' /><br/>
                 Password Confirmation: <input type='text' /><br />
                 Email: <input type='text' /><br />
                 <br />
-                <button>Submit</button>
+                <button onClick={this.submitForm}>Submit</button>
             </div>
         )
     }
