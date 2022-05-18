@@ -78,12 +78,11 @@ class App extends Component {
             {question.question}
           </p>
           <br />
-          <button className="question-choice" onClick={() => this.answerQuestion(index, question.possibleAnswers[0])}>
-            {question.possibleAnswers[0]}
-          </button>
-          <button className="question-choice" onClick={() => this.answerQuestion(index, question.possibleAnswers[1])}>
-            {question.possibleAnswers[1]}
-          </button>
+          {this.state.questions[index].possibleAnswers.map((answer, answerIndex) => (
+              <button key={`${index}-a`} className="question-choice" onClick={() => this.answerQuestion(index, answer)}>
+                {answer}
+              </button>
+          ))}
           <br />
           {this.displayResult(index)}
         </div>
