@@ -43,13 +43,33 @@ export class Animal extends Component {
         </li>
     ))
 
-    return (
-        <div>
-            {this.props.children}
-            <ul>{listDetails}</ul>
-        </div>
-    );
+      return (
+          <div>
+              {this.props.children}
+              <ul>
+                  {details.map((detail, index) => (
+                      <AnimalDetails detail={detail} key={index} />
+                  ))}
+              </ul>
+          </div>
+      );
   }
+}
+
+class AnimalDetails extends Component {
+    render() {
+        const {name, number, endangered} = this.props.detail;
+
+        return (
+            <li key={this.props.key}>
+                <div>
+                    <p>Animal: {name}</p>
+                    <p>Number: {number}</p>
+                    <p>Endangered: {endangered ? 'Yes' : 'No'}</p>
+                </div>
+            </li>
+        )
+    }
 }
 
 
