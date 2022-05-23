@@ -46,7 +46,16 @@ export class Animal extends Component {
               {this.props.children}
               <ul>
                   {details.map((detail, index) => (
-                      <WrapperComponent image={<Photo path={detail.photo} title={detail.name} />} detail={detail} key={index} />
+                      <WrapperComponent key={index} donationAmount={detail.donation} render={({donationColor}) => {
+                      return (
+                          <AnimalDetails
+                              donationColor={donationColor}
+                              image={<Photo path={detail.photo} title={detail.name}
+                              />}
+                              detail={detail}
+                              key={index}
+                          />
+                      )}} />
                   ))}
               </ul>
           </div>
@@ -59,7 +68,6 @@ class AnimalDetails extends Component {
         const {name, number, endangered, id, donation} = this.props.detail;
         const {image, donationColor} = this.props
 
-        console.log(donation)
         return (
             <li key={id}>
                 <div>
@@ -86,26 +94,42 @@ class Photo extends Component {
 }
 
 
-const withDonationColor = WrapperComponent => {
-    return class extends Component {
-        constructor(props) {
-            super(props);
-            this.state = {donationColor: 'black'}
-        }
+// const withDonationColor = WrapperComponent => {
+//     return class extends Component {
+//         constructor(props) {
+//             super(props);
+//             this.state = {donationColor: 'black'}
+//         }
+//
+//         componentDidMount() {
+//             const donationAmount = this.props.donation;
+//             const donationColor = donationAmount > 50 ? 'green' : 'red'
+//             this.setState({donationColor})
+//         }
+//
+//         render() {
+//             return <WrapperComponent {...this.props} donationColor={this.state.donationColor} />
+//         }
+//     }
+// }
 
-        componentDidMount() {
-            const donationAmount = this.props.donation;
-            const donationColor = donationAmount > 50 ? 'green' : 'red'
-            this.setState({donationColor})
-        }
+class WrapperComponent extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {donationColor: 'black'}
+    }
 
-        render() {
-            return <WrapperComponent {...this.props} donationColor={this.state.donationColor} />
-        }
+
+    componentDidMount() {
+        const donationAmount = this.props.donationAmount;
+        const donationColor = donationAmount > 50 ? 'green' : 'red';
+        this.setState({donationColor})
+    }
+
+    render() {
+        return this.props.render({donationColor: this.state.donationColor})
     }
 }
-
-const WrapperComponent = withDonationColor(AnimalDetails)
 
 
 export default App;
