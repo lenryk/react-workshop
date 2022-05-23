@@ -1,36 +1,50 @@
 import React, { Component } from 'react';
 
 class App extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            details: [
+                {
+                    id: '1',
+                    name: 'Tiger',
+                    number: 3890,
+                    endangered: true,
+                    photo: 'https://source.unsplash.com/Si6Obte6Bu0/200x100',
+                    donation: 100,
+                },
+                {
+                    id: '2',
+                    name: 'Brown Bear',
+                    number: 200000,
+                    endangered: false,
+                    photo: 'https://source.unsplash.com/c8XlAc1akIU/200x100',
+                    donation: 10,
+                },
+                {
+                    id: '3',
+                    name: 'Red Panda',
+                    number: 10000,
+                    endangered: true,
+                    photo: 'https://source.unsplash.com/2zYHKx8jtvU/200x100',
+                    donation: 50,
+                },
+            ],
+        };
+    }
+
+    removeList(id) {
+        this.setState(prevState => {
+            const list = prevState.details.filter(item => item.id !== id)
+            return {prevState, details: list}
+        })
+    }
+
   render() {
-      const details = [
-          {
-              name: 'Tiger',
-              number: 3890,
-              endangered: true,
-              photo: 'https://source.unsplash.com/S0txA-JnUFA/400x300',
-              id: 1,
-              donation: 100,
-          },
-          {
-              name: 'Brown Bear',
-              number: 200000,
-              endangered: false,
-              photo: 'https://source.unsplash.com/c8XlAc1akIU/400x300',
-              id: 2,
-              donation: 10,
-          },
-          {
-              name: 'Red Panda',
-              number: 10000,
-              endangered: true,
-              photo: 'https://source.unsplash.com/2zYHKx8jtvU/400x300',
-              id: 3,
-              donation: 50,
-          }
-      ];
 
     return (
-        <Animal details={details}>
+        <Animal details={this.state.details} removeList={this.removeList.bind(this)}>
             <h1>Endangered Animals</h1>
         </Animal>
     )
@@ -46,16 +60,13 @@ export class Animal extends Component {
               {this.props.children}
               <ul>
                   {details.map((detail, index) => (
-                      <WrapperComponent key={index} donationAmount={detail.donation} render={({donationColor}) => {
-                      return (
-                          <AnimalDetails
-                              donationColor={donationColor}
-                              image={<Photo path={detail.photo} title={detail.name}
-                              />}
-                              detail={detail}
-                              key={index}
+                      <WrapperComponent
+                          key={index}
+                          image={<Photo path={detail.photo} title={detail.name} />}
+                          detail={detail}
+                          index={index}
+                          removeList={this.props.removeList}
                           />
-                      )}} />
                   ))}
               </ul>
           </div>
@@ -66,7 +77,7 @@ export class Animal extends Component {
 class AnimalDetails extends Component {
     render() {
         const {name, number, endangered, id, donation} = this.props.detail;
-        const {image, donationColor} = this.props
+        const {image, donationColor, removeList} = this.props
 
         return (
             <li key={id}>
@@ -78,6 +89,7 @@ class AnimalDetails extends Component {
                     <p style={{ color: donationColor }}>
                         Donation amount: <span className='donation-color'>${donation}</span>
                     </p>
+                    <button onClick={() => removeList(id)}>Remove from the list</button>
                 </div>
             </li>
         )
@@ -94,42 +106,43 @@ class Photo extends Component {
 }
 
 
-// const withDonationColor = WrapperComponent => {
-//     return class extends Component {
-//         constructor(props) {
-//             super(props);
-//             this.state = {donationColor: 'black'}
-//         }
-//
-//         componentDidMount() {
-//             const donationAmount = this.props.donation;
-//             const donationColor = donationAmount > 50 ? 'green' : 'red'
-//             this.setState({donationColor})
-//         }
-//
-//         render() {
-//             return <WrapperComponent {...this.props} donationColor={this.state.donationColor} />
-//         }
-//     }
-// }
+const withDonationColor = WrapperComponent => {
+    return class extends Component {
+        constructor(props) {
+            super(props);
+            this.state = {donationColor: 'black'}
+        }
 
-class WrapperComponent extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {donationColor: 'black'}
-    }
+        componentDidMount() {
+            const donationAmount = this.props.donation;
+            const donationColor = donationAmount > 50 ? 'green' : 'red'
+            this.setState({donationColor})
+        }
 
-
-    componentDidMount() {
-        const donationAmount = this.props.donationAmount;
-        const donationColor = donationAmount > 50 ? 'green' : 'red';
-        this.setState({donationColor})
-    }
-
-    render() {
-        return this.props.render({donationColor: this.state.donationColor})
+        render() {
+            return <WrapperComponent {...this.props} donationColor={this.state.donationColor} />
+        }
     }
 }
 
+// class WrapperComponent extends Component {
+//     constructor(props) {
+//         super(props);
+//         this.state = {donationColor: 'black'}
+//     }
+//
+//
+//     componentDidMount() {
+//         const donationAmount = this.props.donationAmount;
+//         const donationColor = donationAmount > 50 ? 'green' : 'red';
+//         this.setState({donationColor})
+//     }
+//
+//     render() {
+//         return this.props.render({donationColor: this.state.donationColor})
+//     }
+// }
+
+const WrapperComponent = withDonationColor(AnimalDetails);
 
 export default App;
