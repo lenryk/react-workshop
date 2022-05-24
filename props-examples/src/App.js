@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './styles.css'
 
 class App extends Component {
 
@@ -34,6 +35,15 @@ class App extends Component {
         };
     }
 
+    addList(details) {
+        this.setState(prevState => {
+            const newId = prevState.details.length + 1;
+            const newDetails = { ...details, id: newId };
+            return { ...prevState, details: [...prevState.details,
+                    newDetails] };
+        });
+    }
+
     removeList(id) {
         this.setState(prevState => {
             const list = prevState.details.filter(item => item.id !== id)
@@ -44,11 +54,100 @@ class App extends Component {
   render() {
 
     return (
-        <Animal details={this.state.details} removeList={this.removeList.bind(this)}>
-            <h1>Endangered Animals</h1>
-        </Animal>
+        <>
+            <Animal details={this.state.details}
+                    removeList={this.removeList.bind(this)}>
+                <h1>Endangered Animals</h1>
+            </Animal>
+            <AnimalForm addList={this.addList.bind(this)} />
+        </>
     )
   }
+}
+
+export class AnimalForm extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: '',
+            number: 0,
+            endangered: false,
+            photo: '',
+            donations: 0
+        }
+        this.handleChange = this.handleChange.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
+    }
+
+    handleChange(event) {
+        const inputTarget = event.target;
+        const inputValue = this.getInputValue(inputTarget);
+        const inputName = inputTarget.name;
+        this.setState({ [inputName]: inputValue });
+    }
+
+    getInputValue(target) {
+        if (target.type === 'radio' && target.value === 'yes') {
+            return true;
+        } else if (target.type === 'radio' && target.value === 'no') {
+            return false;
+        }
+        return target.value;
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        this.props.addList(this.state);
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <h2>Add new animal details</h2>
+                <label>
+                    <div className='title'>Name:</div>{' '}
+                    <input type='text' name='name' onChange={this.handleChange} />
+                </label>
+                <label>
+                    <div className='title'>Number:</div>{' '}
+                    <input type='number' name='number' onChange={this.handleChange} />
+                </label>
+                <div>
+                    <div className='title'>Endangered:</div>
+                    <label>
+                        <input
+                            type='radio'
+                            name='endangered'
+                            value='true'
+                            onChange={this.handleChange}
+                        />{' '}
+                        Yes
+                    </label>
+                    <label>
+                        <input
+                            type='radio'
+                            name='endangered'
+                            value='false'
+                            onChange={this.handleChange}
+                        />{' '}
+                        No
+                    </label>
+                </div>
+                <label>
+                    <div className='title'>Photo:</div>{' '}
+                    <input type='text' name='photo' onChange={this.handleChange} />
+                </label>
+                <label>
+                    <div className='title'>Donation:</div> $
+                    <input type='number' name='donation' onChange={this.handleChange} />
+                </label>
+                <div>
+                    <button>Add to the list</button>
+                </div>
+            </form>
+        );
+    }
 }
 
 export class Animal extends Component {
