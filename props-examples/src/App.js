@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './styles.css'
 
+const CountContext = React.createContext(0);
+
 class App extends Component {
 
     constructor(props) {
@@ -32,6 +34,7 @@ class App extends Component {
                     donation: 50,
                 },
             ],
+            count: 0,
         };
     }
 
@@ -40,8 +43,12 @@ class App extends Component {
             const newId = prevState.details.length + 1;
             const newDetails = { ...details, id: newId };
             return { ...prevState, details: [...prevState.details,
-                    newDetails] };
-        });
+                    newDetails] }
+
+        },
+            () => {
+                this.updateCount();
+            });
     }
 
     removeList(id) {
@@ -51,18 +58,49 @@ class App extends Component {
         })
     }
 
+    updateCount() {
+        this.setState(prevState => {
+            return {
+                ...prevState,
+                count: this.state.details.filter(item => item.endangered === true).length
+            }
+        })
+    }
+
+    componentDidMount() {
+        this.updateCount();
+    }
+
   render() {
 
     return (
         <>
-            <Animal details={this.state.details}
-                    removeList={this.removeList.bind(this)}>
-                <h1>Endangered Animals</h1>
-            </Animal>
-            <AnimalForm addList={this.addList.bind(this)} />
+            <CountContext.Provider value={this.state.count}>
+                <Animal details={this.state.details}
+                        removeList={this.removeList.bind(this)}>
+                    <h1>Endangered Animals</h1>
+                </Animal>
+                <AnimalForm addList={this.addList.bind(this)} />
+            </CountContext.Provider>
         </>
     )
   }
+}
+
+class AnimalCount extends Component {
+
+    render() {
+        return (
+            <CountContext.Consumer>
+                {props => (
+                    <div>
+                        Total number of endangered animals:
+                        <span> {props}</span>
+                    </div>
+                )}
+            </CountContext.Consumer>
+        )
+    }
 }
 
 export class AnimalForm extends Component {
@@ -168,6 +206,7 @@ export class Animal extends Component {
                           />
                   ))}
               </ul>
+              <AnimalCount />
           </div>
       );
   }
